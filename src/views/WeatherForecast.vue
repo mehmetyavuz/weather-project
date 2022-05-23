@@ -33,7 +33,7 @@
                 </div>
                 <div v-for="hh in this.today" :key="hh.dt"
                      class="flex-column">
-                  <p class="small mb-1">{{ getHours(hh["dt_txt"]) }}</p>
+                  <p class="small mb-1">{{ getHours(convertDate(hh["dt_txt"])) }}</p>
                   <p class="small mb-0 fw-bold">
                     {{ parseInt(hh.main["temp"]) }}°C
                   </p>
@@ -121,6 +121,7 @@ export default {
       // getting week days as text
       let weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
       let day = new Date(datetime)
+      console.log(day)
       return isShort ? weekday[day.getDay()].substring(0, 3) : weekday[day.getDay()]
     },
     getHours(datetime) {
