@@ -52,6 +52,7 @@ export default {
       // clear previous request in setTimeout
       clearTimeout(this.timeout)
       this.loading = false
+      this.userCity.coordinates = null
 
       let query = e.target.value
       if (query.length > 0) {
