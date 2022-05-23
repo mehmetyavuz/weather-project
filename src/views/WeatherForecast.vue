@@ -3,12 +3,12 @@
     <div class="row d-flex justify-content-center align-items-center h-100">
       <div class="col-md-12 col-xl-10">
 
-        <div class="card shadow-0 border border-dark border-5 text-dark" style="border-radius: 10px;">
+        <div class="card shadow-0 border border-dark border-1 text-dark" style="border-radius: 10px;">
           <div class="card-body p-5">
             <div v-if="this.today.length > 0" class="mb-5">
               <div class="d-flex justify-content-around mt-3">
                 <p class="big">{{ this.city.name }}, {{ this.city["country"] }}</p>
-                <p class="big">{{ new Date(this.today[0]["dt_txt"]).toDateString() }}</p>
+                <p class="big">{{ new Date(convertDate(this.today[0]["dt_txt"])).toDateString() }}</p>
                 <div class="text-center">
                   <img v-if="photo.dataUrl" :src="photo.dataUrl" :alt="userCity.username" height="70"/>
                   <p class="big">{{ userCity.username }}</p>
@@ -18,8 +18,8 @@
               <div class="d-flex justify-content-around align-items-center py-3 my-1">
                 <p class="fw-bold mb-0" style="font-size: 7rem;">{{ parseInt(this.today[0].main["temp"]) }}°C</p>
                 <div class="text-start">
-                  <p class="small">{{ this.getHours() }}</p>
-                  <p class="h3 mb-3">{{ this.getDay(this.today[0]["dt_txt"], false) }}</p>
+                  <p class="small">{{ getHours() }}</p>
+                  <p class="h3 mb-3">{{ getDay(convertDate(this.today[0]["dt_txt"]), false) }}</p>
                   <p class="small mb-0">{{ this.today[0].weather[0].description }}</p>
                 </div>
               </div>
@@ -58,7 +58,7 @@
                   <p class="small mb-1 text-center">21:00</p>
                 </div>
                 <div v-for="day in this.nextDays" :key="day[0].dt" class="flex-column text-center">
-                  <p class="small mb-1 fw-bold">{{ getDay(day[0]["dt_txt"]) }}</p>
+                  <p class="small mb-1 fw-bold">{{ getDay(convertDate(day[0]["dt_txt"])) }}</p>
                   <p v-for="hh in day" :key="hh.dt" class="small mb-1">
                     {{ parseInt(hh.main["temp"]) }}°C
                   </p>
@@ -69,7 +69,7 @@
               </div>
             </div>
             <div v-else-if="loading" class="d-flex justify-content-around mb-5 fa-3x">
-                <span class="fa-solid fa-spinner fa-spin-pulse fa-spin-reverse"></span>
+              <span class="fa-solid fa-spinner fa-spin-pulse fa-spin-reverse"></span>
             </div>
             <div v-else>
               <div class="d-flex justify-content-around text-danger">
@@ -78,7 +78,7 @@
             </div>
             <div class="d-flex justify-content-around">
               <button @click="restart" class="btn btn-danger">
-              <span class="fa fa-arrow-left"></span> Restart
+                <span class="fa fa-arrow-left"></span> Restart
               </button>
             </div>
 
@@ -127,6 +127,10 @@ export default {
       let hours = datetime ? new Date(datetime) : new Date()
       let minutes = `${hours.getMinutes()}`.padStart(2, "0")
       return `${hours.getHours()}:${minutes}`
+    },
+    convertDate(date) {
+      // replace character '/' which gives 'Invalid Date' error in Safari browser
+      return date.replace(/-/g, "/")
     }
   },
   async created() {
@@ -144,13 +148,16 @@ export default {
           .then(response => {
             this.city = response.data.city
             let list = response.data.list
-            let firstDay = new Date(list[0]["dt_txt"]).getDate()
-            let prevDay = new Date(list[0]["dt_txt"]).getDate()
+
+            let first_day_txt = this.convertDate(list[0]["dt_txt"])
+            let firstDay = new Date(first_day_txt).getDate()
+            let prevDay = new Date(first_day_txt).getDate()
             let daily = []
 
             // splitting today's data and next days' forecast data
             list.forEach(item => {
-              let dt = new Date(item["dt_txt"])
+              let date_txt = this.convertDate(item["dt_txt"])
+              let dt = new Date(date_txt)
               let currentDay = dt.getDate()
 
               if (currentDay === firstDay) {
