@@ -1,0 +1,25 @@
+{
+  "name": "weather-project",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest --dom",
+    "coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "axios": "^0.27.2",
+    "vue": "^3.2.25",
+    "vue-router": "^4.0.15"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^2.3.3",
+    "@vue/test-utils": "^2.0.0",
+    "c8": "^7.11.3",
+    "happy-dom": "^4.0.1",
+    "vite": "^2.9.9",
+    "vitest": "^0.12.9"
+  }
+}
